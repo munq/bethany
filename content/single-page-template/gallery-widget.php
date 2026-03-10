@@ -7,7 +7,8 @@
 // Get the 'gallery' sub field from $sub_page
 // Show the image from 'gallery'
 
-	$rows_count = count(get_sub_field('gallery_repeater'));
+	$gallery_rows = get_sub_field( 'gallery_repeater' );
+	$rows_count = is_array( $gallery_rows ) ? count( $gallery_rows ) : 0;
 	
 	if(have_rows('gallery_repeater'))
 	{
@@ -20,7 +21,7 @@
 			
 			$gallery = get_sub_field('gallery');
 			
-			if($gallery->post_status != 'publish')
+			if ( ! is_object( $gallery ) || ! isset( $gallery->post_status ) || 'publish' !== $gallery->post_status )
 				continue;
 			
 			$featured_image_url 	= 	get_post_thumbnail_id($gallery->ID);			
