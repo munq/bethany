@@ -471,7 +471,7 @@ date_default_timezone_set("UTC");
 
                         $memory_verses_formatted = get_rearranged_verses($memory_verses, $index);
 
-                        if (count($memory_verses_formatted) > 0) {
+                        if (is_array($memory_verses_formatted) && count($memory_verses_formatted) > 0) {
                             foreach ($memory_verses_formatted as $mv) { ?>
                                 <div>
                                     <div class="box-banner">

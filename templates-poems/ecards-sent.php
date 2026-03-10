@@ -16,7 +16,7 @@ if ( $gglcptch_get_response['success'] !== true ) {
   wp_die("Sorry Can not access directly");
 }
 
-if(isset($_POST) && !empty($_POST)) { 
+if ( ! empty( $_POST ) ) { 
 	get_header(); ?>
 	<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
@@ -28,23 +28,25 @@ if(isset($_POST) && !empty($_POST)) {
 	<?php get_template_part('content/common', 'breadcrumb'); ?>
 
 	<?php
-	$category_id 	= intval($_POST['category_id']);
-	$cat_slug 		= get_category($category_id);
-	$cat_name 		= $cat_slug->slug;
-	$exclude_post 	= intval($_POST['exclude_post']);
+	$category_id 	= isset( $_POST['category_id'] ) ? absint( $_POST['category_id'] ) : 0;
+	$cat_slug 		= $category_id ? get_category( $category_id ) : null;
+	$cat_name 		= ( $cat_slug && ! is_wp_error( $cat_slug ) ) ? $cat_slug->slug : '';
+	$exclude_post 	= isset( $_POST['exclude_post'] ) ? absint( $_POST['exclude_post'] ) : 0;
 
 	add_filter( 'wp_mail_content_type', function( $content_type ) {
 		return 'text/html';
 	});
 
-	$from_name 			= $_POST['from_name'];
-	$from_email 		= $_POST['from_email'];
-	$recipient_email 	= array_filter($_POST['recipient_email']);
-	$recipient_name 	= array_filter($_POST['recipient_name']);
-	$bgcolor	 		= $_POST['bgcolor'];
-	$font_color	 		= $_POST['font_color'];
-	$image_src	 		= $_POST['image_src'];
-	$message	 		= stripslashes($_POST['ecard_html']);
+	$from_name 			= isset( $_POST['from_name'] ) ? sanitize_text_field( wp_unslash( $_POST['from_name'] ) ) : '';
+	$from_email 		= isset( $_POST['from_email'] ) ? sanitize_email( wp_unslash( $_POST['from_email'] ) ) : '';
+	$recipient_email 	= isset( $_POST['recipient_email'] ) && is_array( $_POST['recipient_email'] ) ? array_filter( array_map( 'sanitize_email', wp_unslash( $_POST['recipient_email'] ) ) ) : array();
+	$recipient_name 	= isset( $_POST['recipient_name'] ) && is_array( $_POST['recipient_name'] ) ? array_filter( array_map( 'sanitize_text_field', wp_unslash( $_POST['recipient_name'] ) ) ) : array();
+	$bgcolor	 		= isset( $_POST['bgcolor'] ) ? sanitize_text_field( wp_unslash( $_POST['bgcolor'] ) ) : '';
+	$font_color	 		= isset( $_POST['font_color'] ) ? sanitize_text_field( wp_unslash( $_POST['font_color'] ) ) : '';
+	$image_src	 		= isset( $_POST['image_src'] ) ? esc_url_raw( wp_unslash( $_POST['image_src'] ) ) : '';
+	$message	 		= isset( $_POST['ecard_html'] ) ? wp_unslash( $_POST['ecard_html'] ) : '';
+	$email_sent_conf = array();
+	$email_notsent_conf = array();
 
 	//$headers  = "MIME-Version: 1.0" . "\r\n";
 	//$headers .= "Content-type: text/html; charset=".get_bloginfo('charset')."" . "\r\n";
@@ -52,6 +54,7 @@ if(isset($_POST) && !empty($_POST)) {
 	$headers .= 'Reply-To: "'.$from_name.'" <'.$from_email.'>';
 
 	for($i=0; $i<count($recipient_email); $i++) {
+		$recipient_name_value = isset( $recipient_name[$i] ) ? $recipient_name[$i] : '';
 
 		$email_template = file_get_contents(get_template_directory() . '/content/ecards/email-template.php');
 		$email_template = str_replace('%bgcolor%', $bgcolor, $email_template);
@@ -61,17 +64,17 @@ if(isset($_POST) && !empty($_POST)) {
 		if ( empty($message) ) {
 			$email_template = str_replace('%recipient_name%', "", $email_template);
 		} else {
-			$email_template = str_replace('%recipient_name%', $recipient_name[$i].",", $email_template);
+			$email_template = str_replace('%recipient_name%', $recipient_name_value . ",", $email_template);
 		}
 
 		$email_template = str_replace('%message%', $message, $email_template);
 		$body = $email_template;
 
 		if(wp_mail( $recipient_email[$i], $from_name.' has sent you an eCard', $body, $headers )) {
-			$email_sent_conf[] = $recipient_name[$i];
+			$email_sent_conf[] = $recipient_name_value;
 		}
 		else {
-			$email_notsent_conf[] = $recipient_name[$i];
+			$email_notsent_conf[] = $recipient_name_value;
 		}
 	}
 	?>
@@ -129,7 +132,7 @@ if(isset($_POST) && !empty($_POST)) {
 					<?php
 					if(isset($_POST) && !empty($_POST)) {
 						
-						if(!empty($_POST['category_id'])) {						
+						if ( $category_id ) {						
 							$args = array(
 								'post_type' 		=> 'page',
 								'post_status'		=> 'publish',
@@ -196,8 +199,8 @@ if(isset($_POST) && !empty($_POST)) {
 					$('.btn-ecard-preview').click(function(){
 						$('#bethany_ecard_item_preview').removeClass('hidden');
 						$('#ecard-sent').addClass('hidden');
-						var image = '<image src="<?php echo $_POST['image_src']; ?>" />';
-						var ecard_html = '<?php echo stripslashes($_POST['ecard_html']); ?>';
+						var image = '<image src="<?php echo esc_js( $image_src ); ?>" />';
+						var ecard_html = '<?php echo esc_js( $message ); ?>';
 						$('.ecard-preview-box').css('background-color', '#fff').html(ecard_html + '<br /><br />' + image);
 						$(window).scrollTop(0);
 					});
