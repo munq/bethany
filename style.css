@@ -1,0 +1,27 @@
+/*
+Theme Name: Bethany
+Theme URI: http://www.convertium.com
+Author: Convertium Pte Ltd
+Author URI: http://www.convertium.com
+Description: This is a custom template for Bethany Church Singapore
+Version: 1.0
+Text Domain: convertium
+*/
+
+ch3 {
+	font-size: xx-large;
+}
+
+ch4 {
+	font-size: x-large;
+}
+
+ch5 {
+	font-size: x-large;
+	text-indent: 10px;
+}
+
+ch6 {
+	font-size: x-large;
+	text-indent: 20px;
+}

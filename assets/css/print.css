@@ -1,0 +1,20 @@
+#wpadminbar,
+.bsr-filter,
+.nav-download,
+#banner-main,
+#breadcrumb,
+.pagination,
+header#top,
+footer#footer
+{ display: none; }
+
+body, #content { background: #fff; }
+
+html { margin-top: 0 !important; }
+
+@media print{
+	.wrapper {
+		width: 100%;
+	}
+	
+}

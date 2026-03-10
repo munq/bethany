@@ -1,0 +1,65 @@
+<?php if (!defined('ABSPATH')) die('No direct script access allowed!');
+/**
+ * Template Name: YAG Gallery
+ *
+ * @package Bethany
+ * @subpackage bethany
+ * @since bethany 1.0
+ */
+ 
+get_header('yag'); ?>
+
+<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+
+<!-- Main Banner -->
+<?php get_template_part('content/ypg-yag/subpage', 'banner'); ?>
+<!--#end of Main Banner -->
+
+<!-- include breadcrumbs -->
+<?php get_template_part('content/ypg-yag/fellowship', 'breadcrumb'); ?>
+
+<!-- Content -->
+<section id="content" class="clearfix">
+	<div class="wrapper">
+	<!-- Inside Page Tabs -->
+	<div class="tabs inside-nav clearfix">
+		<?php get_template_part('content/ypg-yag/sub', 'page-tabs'); ?>
+	</div><!--#end of Inside Page Tabs -->
+	<!-- Full-width Column -->
+	
+	<section class="col-full wrapper clearfix">	
+	<?php echo get_the_content(); ?>
+	</section>
+	
+	<?php
+	if(have_rows('widgets'))
+	{
+		while(have_rows('widgets'))
+		{		
+			the_row();
+			
+			// get the row layout.
+			$layout_name = get_row_layout();
+			
+			// Replace the layout _ to - to match your content file Eg: free_html to free-html.
+			$layout_name = str_replace('_', '-', $layout_name);
+						
+			// get the content file 
+			$content_file 	= get_template_directory() . "/content/single-page-template/{$layout_name}.php";
+			
+			if (is_file($content_file)) // if the content file exists include it.
+			{
+				include $content_file;
+			}
+			else // else include the default file
+			{
+				include get_template_directory() . "/content/common-default.php";
+			}
+		}
+	}
+	?>	
+	</div>
+</section><!--#end of Content -->
+
+<?php endwhile; endif; ?>
+<?php get_footer(); ?>

@@ -1,0 +1,336 @@
+@charset "UTF-8";
+/* ============================================================
+ * Media Queries for Responsive Design.
+ * These examples override the primary ('mobile first') styles.
+ * Modify as content requires.
+ * ============================================================ */
+@media only screen and (max-width:1000px) {
+	/***** FRAMEWORK *****/
+	html, body, #container {min-width:inherit; overflow-x:initial;}
+	.wrapper {width:100% !important; padding:0 3%;}
+	.desktop-only, #nav-menu, #breadcrumb {visibility:hidden; display:none;}
+	.mobile-only {visibility:visible; display:block;}
+	/*** Columns, Grids ***/
+	/* Columns */
+	.col-main, .col-side, .col-overlap-banner, .col-overlap-img {width:100%; margin-top:1.2em !important; float:none;}
+	.col-main + .col-side {margin-top:2.4em !important;}
+	.col-overlap-banner + .col-overlap-img {display:none;}
+	/* Grids */
+	/*[class*="grid-"] > li.g-four {width:48%;}*/
+	.col-main [class*="grid-"].g-four > li {width:23%;}
+	/***** COMPONENTS *****/
+	/*** Misc ***/
+	.line-horz {display:none;}
+	#bible-study-resources .line-horz {display:block;}
+	/***** TYPEFACE *****/
+	html {font-size:58.5%;}
+	[id*="banner-"] .title {font-size:7vw;}
+	#nav-main-mobile {font-size:2.4rem;}
+	[id*="banner-"] .title > small {font-size:2.1rem;}
+	.mm-list {font-size:15px;}
+	/***** COMPONENTS *****/
+	/*** Headers, Links, Blockquote, Listing ***/
+	h1 {margin-top:2.4rem;}
+	/* Blockquote */
+	blockquote:before, blockquote:after {height:14px;}
+	/* Listing */
+	.list-lesson > li > .cal-date-event, .list-lesson > li > blockquote, .list-lesson > li > div:last-child {width:100%;}
+	.list-lesson > li > .cal-date-event {padding-right:0;}
+	.list-lesson > li > blockquote {margin-right:0;}
+	.list-lesson > li > div:last-child {min-height:inherit; margin-top:0;}
+	/*** Boxes ***/
+	.box-banner {max-width:100%;}
+	[id*="banner-"] .box-banner:last-child {margin-bottom:36px;}
+	.box-banner ~ .box-banner {margin-top:3.2rem;}
+	#banner-home .box-banner {top:0;}
+	#banner-main .box-banner {top:16px;}
+	.box-banner-top {left:1rem;}
+
+	.box-banner-content {width:inherit; min-width:290px; padding:5rem 1.2rem .2rem;}
+	.box-side, .box-side.sticky-side-nav.stuck {margin:0 !important;}
+	.box-side.sticky-box.stuck {width:100%; position:static;}
+	.box-side.sticky-side-nav {padding:.6rem 1.8rem;}
+	.box-side.sticky-side-nav.stuck {width:94%;}
+	/*** Forms ***/
+	.field-wrp.field-half .fs-dropdown {width:48%; float:left;}
+	.field-wrp.field-half .fs-dropdown:first-child {margin-right:2%;}
+	.field-wrp.field-half .fs-dropdown:last-child {margin-left:2%;}
+	/*** Navigation ***/
+	.nav-main > li:first-child > a, .nav-main > li > a br, .nav-mega-wrapper:before {display:none;}
+	.nav-mega-wrapper {display:block;}
+	#nav-main {height:60px; background-color:#fff; top:-60px;}
+	.nav-main > li:hover, .nav-main > li.current {color:#0d4499; border-bottom:0 none;}
+	#nav-logo, #nav-logo > a {height:inherit;}
+	#nav-logo {width:160px; background:none; margin-top:0;}
+	#nav-logo > a {background-image:url(../img/logo-bethany-mobile.png); background-size:contain;}
+	#nav-main-mobile {letter-spacing:-1px; line-height:62px; text-align:center; white-space:nowrap; color:#0d4499; float:right;}
+	#nav-main-mobile:before, #nav-inside-mobile:before {content:"\f20d"; padding-right:.6rem;}
+	#mm-nav-menu .nav-main > li:nth-last-child(-n+4) {background-color:#e5e5e5;}
+	#mm-nav-menu .nav-main > li:nth-last-child(4) > a {border-top:2px solid rgba(0, 0, 0, .1);}
+	#mm-nav-menu .desktop-only {display:none !important;}
+	/*** Home & Main Banners ***/
+	[id*="banner-"] {height:auto !important; background-color:#fff; background-size:auto 340px; margin-top:60px;}
+	[id*="banner-"]:after {border-top:1px solid #e5e5e5; -webkit-transform:rotate(0); -moz-transform:rotate(0); -ms-transform:rotate(0); transform:rotate(0); bottom:calc(-3rem + 1px);}
+	[id*="banner-"] .title {width:100%;}
+	#banner-home .title {height:340px;}
+	#banner-main .title {height:340px !important;}
+	#banner-home .title {padding:0 30% 24px 0;}
+	#banner-main .title {padding:0 0 24px;}
+	#banner-main .title + .box-banner {margin-right:1rem;}
+	/*** Tabs ***/
+	[class^="tabs"] {margin-top:2.4rem;}
+	.sticky-wrapper {height:0 !important;}
+	.tabs.inside-nav .sticky-wrapper {height:auto !important;}
+	.nav-tabs:before {display:none;}
+	.sticky-tabs-header {display:none !important;}
+	.r-tabs .r-tabs-nav {display:none;}
+	.r-tabs .r-tabs-accordion-title {display:block;}
+	.tabs-home .r-tabs-panel {width:100%; margin:1rem 0 1.6rem; float:none;}
+	.tabs-generic .r-tabs-panel {margin-top:-.5rem;}
+	/* Inside Nav */
+	#nav-inside-mobile {display:block !important;}
+	.tabs.inside-nav .nav-tabs {width:100%; height:auto; background-color:#f3f3f3; border-bottom:2px solid rgba(0, 0, 0, .1); display:none !important;}
+	.tabs.inside-nav .nav-tabs.expanded {display:block !important;}
+	.tabs.inside-nav .nav-tabs > li {width:inherit; height:auto; text-align:left; border-bottom:1px solid rgba(0, 0, 0, .1); float:none;}
+	.tabs.inside-nav .nav-tabs > li:after {display:none;}
+	.tabs.inside-nav .nav-tabs > li > a {color:#212121; padding:10px; display:block !important;}
+	.tabs.inside-nav .nav-tabs > li.r-tabs-state-active > a {color:#0d4499;}
+	/*** Expanded Grid, Gallery, Testimonies ***/
+	.grid-expanded {width:98%;}
+	.grid-expanded dl.grid-expanded-inner > dt, .grid-expanded dl.grid-expanded-inner > dd {width:100%; float:none;}
+	.grid-expanded dl.grid-expanded-inner > dt {padding-right:6%;}
+	.grid-expanded dl.grid-expanded-inner > dd {padding:0;}
+	.grid-picturesque > li {width:calc(25% - 1.2rem);}
+	/*** Events ***/
+	.events-filter-top > div:nth-child(1) {width:calc(100% - 22rem - 50px - 120px);}
+	.events-filter-top > div:nth-child(2) {width:calc(22rem + 50px);}
+	.events-filter-top > div:nth-child(3) {width:120px;}
+	.view-list .events-detail {padding-left:0;}
+	.view-calendar .grid-expanded {width:100%;}
+	/*** Bible Study Resources ***/
+	.bsr-filter-date > div:nth-child(2) {margin-right:0;}
+	.bsr-filter-date > div:nth-child(3) {margin-left:8rem;}
+	/*** Tooltip ***/
+	.pagination .tooltip-content, .pagination .tooltip-content:after {margin-left:0;}
+	.pagination > .jp-previous .tooltip-content {left:0;}
+	.pagination > .jp-previous .tooltip-content:after {left:1.8rem;}
+	.pagination > .jp-next .tooltip-content {left:auto; right:0;}
+	.pagination > .jp-next .tooltip-content:after {left:auto; right:1.8rem;}
+	/*** About Us ***/
+	.nav-our-heritage:before {height:calc(100% + 1.2rem); top:-.6rem;}
+	.nav-our-heritage > li {width:33.33333%; float:left;}
+	.nav-our-heritage > li > a {padding-top:.8rem; padding-bottom:.8rem;}
+	/*** Footer ***/
+	#footer-top > li:nth-child(1) {width:230px;}
+	#footer-top > li:nth-child(2) {width:calc(100% - 230px);}
+	#footer-top > li:nth-child(3) {width:100%; margin-top:8px;}
+	#footer-top > li:nth-child(3) br:first-child {display:none;}
+	#footer-links {padding-top:1.8rem !important;}
+	#footer-links > li:nth-child(3) {width:calc(100% - 250px); padding-right:14px;}
+	#footer-links > li:nth-child(4) {width:250px;}
+	/*** PLUGINS ***/
+	/*** Sliders & Carousels ***/
+	.carousel-announcement, #carousel-announcement .carousel-view-all {width:100%;}
+	.carousel-announcement {border-top:1px solid #e5e5e5; padding:0 3%;}
+	#carousel-announcement .carousel-view-all {text-align:center; margin-top:24px; margin-left:0; padding:1rem 3%; position:relative; left:0;}
+	#carousel-announcement .carousel-view-all > a {position:static;}
+	.carousel-announcement .slick-prev, .carousel-announcement .slick-next {display:none !important;}
+	.carousel-announcement .slick-dots {width:94%; display:block !important;}
+	[id^="banner-"] .slider-generic {width:calc(100% - 5.4rem); margin:2.4rem auto 0;}
+	.slider-photo-caption .box-generic {width:calc(100% - 6rem); margin-top:-3.6rem;}
+	.slider-photo-caption .slick-prev, .slider-photo-caption .slick-next, .slider-gallery .slick-prev, .slider-gallery .slick-next {top:9rem;}
+	/*** Lightbox ***/
+	.fancybox-lock .fancybox-overlay {overflow:hidden !important;}
+	.fancybox-content h2 {margin-right:40px;}
+	.fancybox-content .fancybox-close {width:4.8rem; height:4.8rem; line-height:4.8rem;}
+}
+@media only screen and (max-width:800px) {
+	/***** COMPONENTS *****/
+	/*** Boxes ***/
+	.box-banner.v2 > div {display:block;}
+	.box-banner.v2 > .box-banner-content {padding:0;}
+	.box-gray {padding:1.6rem 1.8rem;}
+	/*** Resource Download ***/
+	.nav-features > li {width:5rem !important;}
+	/*** Bible Study Resources ***/
+	.filter-category.bsr-filter-cat > a {width:calc(50% - 1.2rem) !important;}
+	.bible-books > div:first-child, .bible-books > div:last-child {width:100%; padding:0;}
+	.bible-books > div:last-child {border-top:1px solid #ccc; margin-top:1.2rem; padding-top:2.4rem;}
+	.list-bsr.new-testament {-webkit-column-count:3; -moz-column-count:3; column-count:3;}
+	#tab-bible-books .line-horz {display:none;}
+	#subscribe-daily-devotions .field-wrp > input {width:100%;}
+	ul.book-chapter > li:not(.mm-subtitle) {line-height:3.6rem;}
+	/*** About Us ***/
+	.list-our-leaders > li > ul.c-three > li {width:50%;}
+	.list-our-leaders > li > ul.c-three > li:nth-child(1) {width:100%;}
+	.list-our-leaders > li > ul > li > h3 {margin-bottom:1.4rem;}
+	/*** Contact Us ***/
+	.contact-us > li {width:50%;}
+}
+@media only screen and (max-width:736px) {
+	
+}
+@media only screen and (max-width:667px) {
+	/*** Events ***/
+	.events-filter-top {height:auto;}
+	.events-filter-top > div:nth-child(1) {width:100%; margin-bottom:.8rem;}
+	.events-filter-top > div:nth-child(3) {width:50%; float:right;}
+}
+@media only screen and (max-width:600px) {
+	/***** TYPEFACE *****/
+	[id*="banner-"] .title {font-size:3.6rem;}
+	h1 {font-size:3.4rem;}
+	h2 {font-size:3rem;}
+	.calendar-dates > li .date {font-size:2rem;}
+	/*** Columns, Grids ***/
+	[class*="grid-"].g-three > li, [class*="grid-"] > li.g-three, .col-main [class*="grid-"].g-four > li, [class*="grid-"].wall-display.g-four > li {width:48%;}
+	.valign-middle > div {display:block;}
+	.valign-middle > div:first-child {padding-right:0; padding-bottom:.8rem;}
+	.list-lesson-simple .cal-date-event > div {width:100% !important; min-height:inherit; float:none;}
+	.list-lesson-simple .cal-date-event > .date {-webkit-justify-content:flex-start; justify-content:flex-start;}
+	.list-lesson-simple .cal-date-event > .event {margin-bottom:1.6rem; padding-left:0;}
+	.list-lesson-simple .cal-date-event > .event:before {display:none;}
+	/*** Resource Download ***/
+	.list-articles > div {padding-right:0;}
+	.list-articles .nav-features {margin-top:0; margin-bottom:2.4rem; position:static;}
+	/*** Events ***/
+	#events .info-list > li {float:none;}
+	#events .info-list > li ~ li {margin-left:0;}
+	.calendar-dates {margin-top:.6rem !important;}
+	.calendar-dates > li {margin-bottom:.6rem !important;}
+	/*** Accordion ***/
+	[class*="accordion"] > h3 {margin:.6rem 0;}
+	[class*="accordion"] .has-right-header.ui-accordion-header {padding-right:6rem;}
+	[class*="accordion"] .has-right-header.ui-accordion-header > .right-header {width:100%; text-align:left; padding:.8rem 0 0; position:static; display:block;}
+	/*** Messages ***/
+	.list-messages .media-bar, .list-messages .nav-download {width:100%; float:none;}
+	.list-messages .media-bar {margin-bottom:.2em;}
+	.list-messages .nav-download {margin-left:0;}
+	.list-messages .nav-download > li {width:calc(25% - 1px);}
+	.theme-prev-next {text-align:right; margin-top:1.2rem; float:none;}
+	/*** Bible Study Resources ***/
+	.bsr-filter-top > div:nth-child(1), .bsr-filter-top > div:nth-child(2) {width:100%; float:none;}
+	.bsr-filter-top > div:nth-child(2) {text-align:left; margin-top:.8rem;}
+	.bsr-filter-top > .field-wrp:empty + div {margin-top:0;}
+	.list-bsr.old-testament, .list-bsr.new-testament {-webkit-column-count:2; -moz-column-count:2; column-count:2;}
+	p.nav-browse-bsr {margin-bottom:1.4rem;}
+	.pagination-count, .pagination-count + span {line-height:inherit !important;}
+	/*** Wall Display ***/
+	.wall-display > li:first-child:before {display:none;}
+	.wall-display > li:nth-child(5) {display:none;}
+	/*** Sitemap ***/
+	ul.listing.listing-sitemap > * {width:100% !important; float:none !important;}
+	ul.listing.listing-sitemap .no-figure {padding-right:0;}
+	ul.listing.listing-sitemap li .box-img {margin-right:0 !important; margin-left:0 !important;}
+	/*** Sliders & Carousels ***/
+	.carousel-events {width:calc(100% - 50px); margin:0; margin-left:25px;}
+	/*** Lightbox ***/
+	.fancybox-wrap {width:100% !important; position:fixed !important; top:0 !important; bottom:0 !important; left:0 !important;}
+	.fancybox-skin, .fancybox-outer, .fancybox-inner {height:100% !important;}
+	.fancybox-inner {width:100% !important;}
+	.fancybox-content .fancybox-close {top:0;}
+}
+@media only screen and (max-width:480px) {
+	#content {min-height:40rem;}
+	/*** Columns, Grids ***/
+	/* Grids */
+	[class*="grid-"] > li {margin-bottom:3.5%;}
+	[class*="grid-"].g-two > li, [class*="grid-"] > li.g-two {width:98%;}
+	[class*="grid-"].g-four > li, [class*="grid-"] > li.g-four {width:48%;}
+	/***** TYPEFACE *****/
+	html {font-size:54.5%;}
+	.nav-download > li > a:before {font-size:2.8rem;}
+	#nav-main-mobile {font-size:2rem;}
+	[id*="banner-"] .title > small {font-size:1.9rem;}
+	.calendar-dates > li .date {font-size:1.8rem;}
+	.media-bar-title, .calendar-days {font-size:1.4rem;}
+	.nav-download {font-size:1.1rem;}
+	/***** COMPONENTS *****/
+	/*** Boxes ***/
+	.box-banner.v2 > .box-banner-content > p {padding-right:0;}
+	.box-banner.v2 > .box-banner-content > p > .link-view-details {margin-top:.8rem; position:static; display:table !important;}
+	/*** Forms ***/
+	input[type="text"], input[type="password"], textarea, .selecter {width:100%;}
+	fieldset .field-close {left:auto; right:0;}
+	.field-wrp.picker-third .picker {width:49%;}
+	/*** Navigation ***/
+	#nav-main {height:48px; top:-48px;}
+	#nav-logo {width:120px;}
+	#nav-main-mobile {line-height:50px;}
+	/*** Home & Main Banners ***/
+	[id*="banner-"] {background-size:auto 180px; margin-top:48px;}
+	#banner-home .title {height:180px;}
+	#banner-main .title {height:180px !important;}
+	/*** Calendar ***/
+	.cal-date-event > .event {padding-left:4rem;}
+	.cal-date-event > .event:before {left:2rem;}
+	/*** Resource Download ***/
+	.nav-download, .download-resource .resource {width:100%; padding:0;}
+	.download-resource .resource + .nav-download {margin-top:.6rem;}
+	.nav-download > li {width:calc(25% - 1px); height:7.4rem;}
+	.nav-download > li > a {padding-top:4.2rem;}
+	.nav-download > li > a:before {top:1rem;}
+	.nav-features > li.save > a:before {top:1.3rem;}
+	/*** Video ***/
+	.media-bar-title {padding: 15px 180px 15px .8rem}
+	.media-bar-duration {width:78px; padding-right:.8rem;}
+	/*** Tabs ***/
+	.tabs-generic .r-tabs-panel {padding:1.2rem;}
+	/*** Expanded Grid, Gallery, Testimonies ***/
+	.grid-picturesque > li {width:calc(50% - 1.2rem);}
+	/*** Events ***/
+	.events-filter-top > div:nth-child(2), .events-filter-top > div:nth-child(3) {width:100%;}
+	.events-filter-top > div:nth-child(3) {margin-top:.8rem;}
+	.calendar-dates > li, .calendar-dates > li > a, .calendar-dates > li > a:before {height:8rem;}
+	.calendar-dates > li > a:before {width:calc(100% - .6rem);}
+	.calendar-dates > li .date {right:.6rem;}
+	.calendar-dates .events-number {bottom:.6rem; left:1rem;}
+	.calendar-dates .events-number > i {width:1rem; height:1rem; margin-top:.25rem;}
+	/*** Bible Study Resources ***/
+	.bsr-filter-top .devotions-select-day {margin:.6rem 0 0 0; display:block;}
+	.bsr-filter-date > div:nth-child(1) {width:6rem; display:none;}
+	.bsr-filter-date > div:nth-child(3) {margin-left:0/*6rem*/;}
+	.fs-dropdown.filterDate {width:12rem;}
+	.bsr-filter-date .selecter + .slash {margin:0;}
+	.list-bsr.old-testament, .list-bsr.new-testament, .list-bsr.column-count-2 {-webkit-column-count:1; -moz-column-count:1; column-count:1;}
+	#tab-bible-topics .line-horz, #tab-bible-series .line-horz {display:none;}
+	ul.book-chapter > li:not(.mm-subtitle) {width:12.5%;}
+	.nav-bsr-listing ul.book-chapter > li:not(.mm-subtitle) {width:20%;}
+	/*** About Us ***/
+	.nav-our-heritage > li {width:100%; float:none;}
+	.our-heritage-timeline > .timeline-seq:nth-child(2) {margin-top:0;}
+	.oh-left, .oh-right {width:100%; float:none;}
+	.oh-item:before, .oh-bull {display:none;}
+	.list-our-leaders > li > ul.c-three > li {width:100%; float:none;}
+	/*** Contact Us ***/
+	.contact-us > li {width:100%; float:none;}
+	/*** Footer ***/
+	#footer > .wrapper {padding:2rem 4%;}
+	#footer-top > li, #footer-links > li {width:100% !important; float:none;}
+	#footer-top > li:nth-child(2) {margin-top:.6rem;}
+	#footer-top > li:nth-child(2) .ion-android-pin, #footer-top > li:nth-child(2) span + br, #footer-top > li br:first-child, #footer-links > li:nth-child(3) br {display:none;}
+	#footer-top > li:nth-child(3) a > img {width:100px;}
+	.box-footer {margin-top:18px;}
+	.box-footer > a {padding:0 1.2rem;}
+	.box-footer img {width:54px; height:auto;}
+	/*** Lightbox ***/
+	.fancybox-content .wrapper {padding-right:3%; padding-left:3%;}
+}
+@media only screen and (max-width:360px) {
+	.box-banner-top {font-size:1.6rem; padding:1.2rem 1.4rem;}
+	.box-banner-top > span:nth-child(2) {margin-left:.8rem; padding-left:1rem;}
+	.box-banner-content {min-width:250px;}
+	.jHtmlAreaColorPickerMenu {width:100%;}
+	.our-leaders-ministry > h3 {text-align:left;}
+	.our-leaders-ministry > dl > dt, .our-leaders-ministry > dl > dd {width:100%; float:none;}
+	.our-leaders-ministry > dl > dt {text-align:left; margin-bottom:0;}
+	.our-leaders-ministry > dl > dd {margin-bottom:1.2rem;}
+}
+@media only screen and (max-width:320px) {
+	.box-banner-content {min-width:230px;}
+}
+@media only screen and (min-width:1000px) and (-webkit-min-device-pixel-ratio:1.25), only screen and (min-width:1000px) and (min-resolution:120dpi){
+	#nav-logo > a, .sticky-tabs-logo {background-image:url(../img/logo-bethany-2x.png);}
+	#nav-logo > a {background-size:170px auto;}
+	#preloader {background-image:url(../img/ajax-loader-2x.gif); background-size:auto 64px;}
+}

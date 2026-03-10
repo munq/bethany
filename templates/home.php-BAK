@@ -1,0 +1,600 @@
+<?php if (!defined('ABSPATH')) die('No direct script access allowed!');
+/**
+ * Template Name: Home Page
+ * @package Bethany
+ * @subpackage bethany
+ * @since bethany 1.0
+ */
+
+get_header(); ?>
+
+<!-- Home Banner -->
+<?php
+$banner_image = get_field('banner_image', $post->ID);
+$banner_image_url = ($banner_image) ? $banner_image['url'] : '';
+$show_section = array();
+?>
+<section id="banner-home" style="background-image:url(<?php echo $banner_image_url; ?>);">
+    <div class="wrapper">
+        <h1 class="title">
+            <?php
+            echo get_field('custom_page_title');
+            echo (get_field('tag_line')) ? '<br><small>' . get_field('tag_line') . '</small>' : '';
+            ?>
+        </h1>
+
+        <!-- Generic Slider -->
+        <div class="slider-generic">
+            <?php
+            $time_today = current_time('timestamp');
+            $daily_devotions = array(
+                'post_type' => 'page',
+                'post_status' => 'publish',
+                'meta_query' => array(
+                    'relation' => 'AND',
+                    array(
+                        'key' => '_wp_page_template',
+                        'value' => 'templates/daily-devotions-detail.php',
+                        'compare' => '=',
+                    ),
+                    array(
+                        'key' => 'article_date',
+                        'value' => date('Ymd', $time_today),
+                        'compare' => '=',
+                        'type' => 'DATE'
+                    ),
+                )
+            );
+
+            $query = new WP_Query($daily_devotions);
+
+            if ($query->have_posts()) {
+
+                while ($query->have_posts()) {
+                    $query->the_post();
+                    setup_postdata($post);
+                    $post_devotion = $post;
+
+                    $article_date = get_field('article_date', $post_devotion->ID);
+                    $text_refrence = get_field('text_refrence', $post_devotion->ID);
+                    $quote = get_field('quote', $post_devotion->ID);
+                    ?>
+                    <div>
+                        <div class="box-banner">
+                            <div class="box-banner-top clearfix">
+                                <span>Daily Devotions</span>
+                                <span><span
+                                        class="numeric"><?php echo date('d', strtotime($article_date)); ?></span> <?php echo date('F', strtotime($article_date)); ?>
+                                    <span
+                                        class="numeric"><?php echo date('Y', strtotime($article_date)); ?></span></span>
+                            </div>
+                            <div class="box-banner-content">
+                                <?php echo ($quote) ? '<blockquote><p>' . $quote . '</p><span>Text: ' . $text_refrence . '</span></blockquote>' : ''; ?>
+                                <p class="txt-right"><a href="<?php echo get_permalink($post_devotion->ID); ?>">Read
+                                        Devotion</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                }
+                wp_reset_postdata();
+            }
+            wp_reset_query();
+            ?>
+        </div><!--#end of Generic Slider -->
+    </div>
+</section><!--#end of Home Banner -->
+
+<!-- Carousel - Announcement -->
+<section id="carousel-announcement" class="add-separator">
+    <div class="carousel-announcement">
+        <?php
+        $args = array(
+            'post_type' => 'news',
+            'post_status' => 'publish',
+            'meta_key' => 'date',                    //(string) - Custom field key.
+            'orderby' => 'meta_value',
+            'order' => 'ASC',
+            'meta_query' => array(
+                array(
+                    'key' => 'date',
+                    'value' => date("Y-m-d"),
+                    'compare' => '>=',
+                    'type' => 'DATE'
+                )
+            )
+        );
+
+        $query = new WP_Query($args);
+
+        if ($query->have_posts()) {
+
+            while ($query->have_posts()) {
+
+                $query->the_post();
+                setup_postdata($post);
+                $post_news = $post;
+
+                $headline = get_the_title($post_news->ID);
+                $news_content = get_quote_charlength(50, strip_tags($post_news->post_content, ''));
+                $news_date = get_field('date', $post_news->ID);
+                ?>
+                <div>
+                    <div class="cal-date-event">
+                        <div class="date">
+                            <span><?php echo date('d', strtotime($news_date)) ?></span>
+                            <span><?php echo date('M', strtotime($news_date)) ?>
+                                <br/><?php echo date('Y', strtotime($news_date)) ?></span>
+                        </div>
+                        <div class="event"><?php echo '<strong>' . $headline . '</strong><br>' . $news_content; ?></div>
+                    </div>
+                </div>
+                <?php
+            }
+            wp_reset_postdata();
+        }
+        wp_reset_query();
+        ?>
+    </div>
+    <div class="carousel-view-all">
+        <a href="<?php echo get_permalink(get_page_by_path('news-events')->ID) . "#news"; ?>">View all announcements</a>
+    </div>
+</section><!--#end of Carousel - Announcement -->
+
+
+<?php
+
+$messages = get_field('messages');
+$tabs = array();
+date_default_timezone_set("Asia/Singapore");
+foreach ($messages as $message_id) {
+    //var_dump(' ===== ' );
+    $message_title = get_the_title($message_id);
+    $message_post_name = get_post($message_id)->post_name;
+    //var_dump(' TAB =  '. $message_title);
+    $week_start = date("Y-m-d", strtotime('sunday last week'));
+    $week_end = date("Y-m-d", strtotime("sunday this week"));
+    $day_of_week_weekly = date('w');
+
+    $series_args = array(
+        'post_type' => 'page',
+        'post_status' => 'publish',
+        'child_of' => $message_id,
+        'post_parent' => $message_id,
+        'orderby' => 'meta_value',
+        'meta_key' => 'start_date',
+        'order' => 'DESC',
+        'posts_per_page' => 1,
+
+    );
+
+    $query = new WP_Query($series_args);
+
+    //var_dump('message-id = '.$message_id);
+    //echo "Last SQL-Query: {$query->request}";
+
+    if ($query->have_posts()) {
+
+        while ($query->have_posts()) {
+
+            $query->the_post();
+            setup_postdata($post);
+            $post_series = $post;
+
+            $message_args = array(
+                'post_type' => 'page',
+                'post_status' => 'publish',
+                'child_of' => $post_series->ID,
+                'post_parent' => $post_series->ID,
+                'depth' => 1,
+                'orderby' => 'meta_value',
+                'meta_key' => 'article_date',
+                'order' => 'DESC',
+                'posts_per_page' => 1,
+            );
+
+            if ( in_array($day_of_week_weekly, array(0,6)) ) {
+                //$message_args['meta_query']['value'] =  date('Y-m-d', strtotime($week_end));
+                $message_args['meta_query']['value'] =  date('Ymd');
+                $message_args['meta_query']['compare'] =  "=";
+            } else {
+                $message_args['meta_query']['value'] =  array(
+                    date('Y-m-d', strtotime($week_start)),
+                    date('Y-m-d', strtotime($week_end))
+                );
+                $message_args['meta_query']['compare'] =  "BETWEEN";
+            }
+
+            $message_args['meta_query']['key'] = 'article_date';
+            $message_args['meta_query']['type'] = 'DATE';
+
+            //var_dump('post_series->ID = '.$post_series->ID);
+            //unset($message_args['meta_query']);
+            $query_message = new WP_Query($message_args);
+
+            //var_dump($query_message->have_posts()); //exit;
+
+            if ($query_message->have_posts()) {
+
+                //echo "Last SQL-Query: {$query_message->request}";
+
+                while ($query_message->have_posts()) {
+
+                    $query_message->the_post();
+                    setup_postdata($post);
+                    $post_message = $post;
+
+                    $messages = get_field('message', $post_message->ID);
+                    $article_date = get_field('article_date', $messages->ID);
+                    //var_dump(' article_date = '. $article_date);
+
+                    $article_title = get_field('article_title', $messages->ID);
+                    $quote = get_field('quote', $messages->ID);
+                    $text_refrence = get_field('text_refrence', $messages->ID);
+                    $speaker = get_field('speaker', $messages->ID);
+                    $chairman = get_field('chairman', $messages->ID);
+
+                    $bulletin = get_field('bulletin', $messages->ID);
+                    $bulletin_url = ($bulletin) ? wp_get_attachment_url($bulletin['id']) : '';
+
+                    if (get_field('notes', $messages->ID)) {
+                        $notes = get_field('notes', $messages->ID);
+                        $notes_url = ($notes) ? wp_get_attachment_url($notes['id']) : '';
+                    } else {
+                        $notes_url = get_field('notes_url', $messages->ID);
+                    }
+
+                    $video_url = get_field('video_url', $messages->ID);
+                    $video_cover_image = get_field('video_cover_image', $messages->ID);
+                    $cover_image_url = ($video_cover_image) ? $video_cover_image['url'] : '';
+
+                    $audio_url = get_field('audio_url', $messages->ID);
+
+                    $tabs[] = array(
+                        'tab-id' => $message_post_name,
+                        'tab-label' => $message_title,
+
+                        //videos
+                        'video_url' => $video_url,
+                        'video_cover_image' => $video_cover_image,
+                        'cover_image_url' => $cover_image_url,
+
+                        //resource download
+                        'article_title' => $article_title,
+                        'text_refrence' => $text_refrence,
+                        'speaker' => $speaker,
+                        'chairman' => $chairman,
+                        'parent_path' => get_permalink($post_message->post_parent),
+                        'parent_link' => get_the_title($post_message->post_parent),
+                        'view_message' => get_permalink($post_message->ID),
+                        'article_date_format' => date('d M Y', strtotime($article_date)),
+                        'message_path' => get_permalink($post_message->ID),
+
+                        //download media
+                        'url' => get_permalink(get_the_ID()),
+                        'bulletin_url' => $bulletin_url,
+                        'notes_url' => $notes_url,
+                        'video_url' => $video_url,
+                        'audio_url' => $audio_url,
+                    );
+
+                }
+                wp_reset_postdata();
+
+            }
+            wp_reset_query();
+
+        }
+        wp_reset_postdata();
+
+    }
+    wp_reset_query();
+
+}
+date_default_timezone_set("UTC");
+?>
+<!-- START CUSTOM Homepage Tabs -->
+<section id="content" class="home-page clearfix">
+    <!-- Highlight #1 -->
+    <!-- Full-width Column -->
+    <section class="col-full wrapper clearfix">
+        <!-- Homepage Tabs -->
+        <?php
+        if ((!empty($tabs)) && (count($tabs) > 0)) { ?>
+            <h2>This Week at Bethany</h2>
+            <!-- Full-width Column -->
+            <section class="col-full clearfix">
+                <!-- Homepage Tabs -->
+                <div class="tabs-home clearfix">
+                    <ul class="nav-tabs-home clearfix">
+                        <?php
+                        foreach ($tabs as $tab): ?>
+                            <li><a href="#tab-<?php echo $tab['tab-id']; ?>"><?php echo $tab['tab-label']; ?></a></li>
+                            <?php
+                        endforeach;
+                        ?>
+                    </ul>
+                    <?php
+                    foreach ($tabs as $tab):
+
+                        ?>
+                        <div id="tab-<?php echo $tab['tab-id']; ?>" class="clearfix">
+                            <!-- Video -->
+                            <?php
+                            if ($tab['video_url']) {
+                                ?>
+                                <div class="video-embed box-img">
+                                    <img
+                                        src="<?php echo ($tab['cover_image_url']) ? $tab['cover_image_url'] : 'http://placehold.it/980x504/369/333&text=video'; ?>"/>
+                                    <?php //if ( $tab['video_url'] ) { ?>
+                                    <div class="video-overlay">
+                                        <span class="video-duration"></span>
+                                    </div>
+                                    <div class="video-iframe">
+                                        <?php echo do_shortcode('[video src="' . $tab['video_url'] . '" width="866" height = "448" preload="metadata"]'); ?>
+                                    </div>
+                                    <?php //} ?>
+                                </div><!--#end of Video -->
+                                <?php
+                            }
+                            ?>
+
+                            <!-- Resource Download -->
+                            <div class="download-resource series-resource clearfix">
+                                <div class="resource">
+                                    <h4><strong><?php echo $tab['article_title']; ?></strong>
+                                        <?php echo ($tab['text_refrence']) ? '<br/>Text: ' . $tab['text_refrence'] : '' ?>
+                                    </h4>
+                                    <dl class="clearfix">
+                                        <?php
+                                        echo ($tab['speaker']) ? '<dt>Speaker:</dt><dd>' . $tab['speaker'] . '</dd>' : '';
+                                        echo ($tab['chairman']) ? '<dt>Chairman:</dt><dd>' . $tab['chairman'] . '</dd>' : '';
+                                        ?>
+                                        <dt>Series:</dt>
+                                        <dd>
+                                            <a href="<?php echo $tab['parent_path']; ?>"><?php echo $tab['parent_link']; ?></a>
+                                        </dd>
+
+                                    </dl>
+                                    <p><?php echo $tab['article_date_format']; ?></p>
+                                    <p><a href="<?php echo $tab['view_message']; ?>">View message</a></p>
+                                </div>
+                                <?php
+
+                                generate_download_media(
+                                    array(
+                                        'url' => $tab['url'],
+                                        'bulletin_url' => $tab['bulletin_url'],
+                                        'notes_url' => $tab['notes_url'],
+                                        'video_url' => $tab['video_url'],
+                                        'audio_url' => $tab['audio_url'],
+                                    )
+                                );
+
+                                ?>
+                            </div><!--#end of Resource Download -->
+                        </div><!--#end of Tab #1 -->
+                        <?php
+                    endforeach;
+                    ?>
+                </div><!--#end of Homepage Tabs -->
+            </section><!--#end of Full-width Column -->
+            <?php
+        }
+        ?>
+        <hr/>
+    </section> <!--#end of Full-width Column -->
+    <!-- END CUSTOM Homepage Tabs -->
+
+    <!-- Highlight #2 -->
+    <!-- Full-width Column -->
+    <section class="col-full wrapper clearfix">
+        <?php
+        $header = get_field('pulpit_theme_header', 'option');
+        $pulpit_theme_image = get_field('pulpit_theme_image', 'option');
+        $image_url = ($pulpit_theme_image) ? $pulpit_theme_image['url'] : '';
+        $image_caption = ($pulpit_theme_image) ? $pulpit_theme_image['caption'] : '';
+        $read_more_link = get_field('read_more_link', 'option');
+        echo $header;
+        ?>
+
+        <!-- Full-width Column -->
+        <section class="col-full clearfix">
+            <!-- Overlapping Image Column -->
+            <?php
+            if ($image_url) {
+                ?>
+                <section class="col-overlap-img float-left">
+                    <div class="box-img">
+                        <img src="<?php echo $image_url; ?>"/>
+                    </div>
+                    <?php echo ($image_caption) ? '<p>' . $image_caption . '</p>' : ''; ?>
+                    <p><?php echo ($read_more_link) ? '<a href="' . $read_more_link . '">View more wall displays</a>' : '&nbsp;'; ?></p>
+                </section><!--#end of Overlapping Image Column -->
+                <?php
+            }
+            ?>
+
+            <!-- Overlapping Banner Column -->
+            <section class="col-overlap-banner float-right">
+                <!-- Carousel - Memory Verse -->
+                <section id="carousel-memory-verse">
+                    <div class="carousel-memory-verse">
+                        <?php
+                        $args = array(
+                            'post_type' => 'memory_verses',
+                            'post_status' => 'publish',
+                            'meta_key' => 'verse_date',
+                            'orderby' => 'meta_value',
+                            'order' => 'ASC'
+                        );
+                        $memory_verses = array();
+                        $query = new WP_Query($args);
+                        if ($query->have_posts()) {
+                            while ($query->have_posts()) {
+                                $query->the_post();
+                                setup_postdata($post);
+                                $memory_verse = $post;
+                                $verse_date = get_field('verse_date', $memory_verse->ID);
+                                $verse_quote = get_field('verse_quote', $memory_verse->ID);
+                                $text_refrence = get_field('text_refrence', $memory_verse->ID);
+                                $verse_content = get_the_content($memory_verse->ID);
+                                $memory_verses[strtotime($verse_date)] = array(
+                                    'date' => $verse_date,
+                                    'title' => $memory_verse->post_title,
+                                    'quote' => $verse_quote,
+                                    'text_refrence' => $text_refrence,
+                                    'verse_content' => apply_filters('the_content', $verse_content),
+                                    'verse_id' => $memory_verse->ID
+                                );
+                            }
+                            wp_reset_postdata();
+                        }
+                        wp_reset_query();
+
+                        $day_of_week = date('w');
+                        $last_sunday = strtotime('-' . $day_of_week . ' days');
+                        $next_sunday = strtotime('+' . (7 - $day_of_week) . ' days');
+                        if ($day_of_week < 3) {
+                            $show_first = $last_sunday;
+                        } else {
+                            $show_first = $next_sunday;
+                        }
+
+                        $show_first_unix = strtotime(date("d F Y", $show_first));
+                        $index = get_verse_index($memory_verses, $show_first_unix);
+                        if ( $index == 0 ) {
+                            $last_sunday = strtotime(date("d F Y", $last_sunday));
+                            $next_sunday = strtotime(date("d F Y", $next_sunday));
+                            $index = get_previous_verse($memory_verses, $day_of_week);
+                        }
+
+                        $memory_verses_formatted = get_rearranged_verses($memory_verses, $index);
+
+                        if (count($memory_verses_formatted) > 0) {
+                            $d = $m = $y = "";
+							foreach ($memory_verses_formatted as $mv) { 
+							?>
+                                <div>
+                                    <div class="box-banner">
+										<div class="box-banner-top clearfix">
+                                            <span>Memory Verse</span>
+                                            <span><span
+                                                    class="numeric"><?php echo date('d', strtotime($mv['date'])) ?></span> <?php echo date('F', strtotime($mv['date'])); ?>
+                                                <span
+                                                    class="numeric"><?php echo date('Y', strtotime($mv['date'])); ?></span></span>
+                                        </div>
+
+                                        <div class="box-banner-content">
+                                            <?php echo "<strong>" . $mv['title'] . "</strong>"; ?>
+                                            <blockquote>
+                                                <p><?php echo $mv['quote']; ?></p>
+                                                <span><?php echo $mv['text_refrence']; ?></span>
+                                            </blockquote>
+                                            <?php
+                                            if ($mv['verse_content']) {
+                                                ?>
+                                                <p class="txt-right">
+                                                    <a class="lightbox-styled" href="#memory-verse_<?php echo $memory_verse->ID; ?>">Read more</a></p>
+                                                <?php
+                                            }
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <!-- Lightbox - Memory Verse -->
+                                    <div class="lightbox-content" id="memory-verse_<?php echo $mv['verse_id']; ?>">
+                                        <div class="wrapper">
+                                            <h2>Memory Verse</h2>
+                                            <h3>
+                                                <small><?php echo date('d F Y', strtotime($mv['date'])) ?></small>
+                                                <br/>
+                                            </h3>
+                                            <!-- Full-width Column -->
+                                            <section class="col-full clearfix">
+                                                <blockquote>
+                                                    <p><?php echo $mv['verse_quote']; ?></p>
+                                                </blockquote>
+                                                <?php echo $mv['verse_content']; ?>
+                                            </section><!--#end of Full-width Column -->
+                                        </div>
+                                    </div><!--#end of Lightbox - Memory Verse -->
+                                </div>
+                                <?php
+								$d = $m = $y = "";
+                            }
+                        }
+                        ?>
+                    </div>
+                </section><!--#end of Carousel - Memory Verse -->
+            </section><!--#end of Overlapping Banner Column -->
+        </section><!--#end of Full-width Column -->
+    </section> <!--#end of Full-width Column -->
+
+</section><!--#end of Content -->
+
+<!-- End Content -->
+
+<?php get_footer(); ?>
+
+<?php
+function get_verse_index($memory_verses, $week_unix)
+{
+    $i = 0;
+    $found = 0;
+    foreach ($memory_verses as $mk => $mv) {
+        if ($mk == $week_unix) {
+            $found = 1;
+            break;
+        } else {
+            $i++;
+        }
+    }
+
+    if ($found == 1) {
+        return $i;
+    } else {
+        return 0;
+    }
+}
+
+function get_rearranged_verses($array, $key)
+{
+    while ($key > 0) {
+        $temp = array_shift($array);
+        $array[] = $temp;
+        $key--;
+    }
+    return $array;
+}
+
+function get_previous_verse($verses, $day_of_week)
+{
+    if ( count($verses) == 0) {
+        return 0;
+    }
+
+    $i = 0;
+    $verses_count = count($verses);
+    $days = $day_of_week;
+    foreach ($verses as $mk => $mv) {
+        if ($i < $verses_count) {
+            //echo "\n"; var_dump('mk = '.date("d F Y", $mk));
+
+            $last_sunday = strtotime('-' . $days . ' days');
+            $last_sunday = strtotime(date("d F Y", $last_sunday));
+            //echo "\n"; var_dump('last_sunday = '.date("d F Y", $last_sunday));
+
+            $index = get_verse_index($verses, $last_sunday);
+            //var_dump('return index = '.$index);
+
+            if ($index > 0) {
+                return $index;
+            }
+
+            $days = $days + 7;
+            $i++;
+        }
+    }
+
+}
+?>
