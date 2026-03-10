@@ -9,10 +9,15 @@
  
  // Get Message post type tied to the page and display its fields
 
-if ( ! empty( $_GET )) {
-	$cal_event_id 	= $_GET['event_id'];
-	$event_id 		= get_post($cal_event_id);
-	$event_title 	= $event_id->post_title	;
+if ( isset( $_GET['event_id'] ) ) {
+	$cal_event_id 	= absint( $_GET['event_id'] );
+	$event_id 		= $cal_event_id ? get_post( $cal_event_id ) : null;
+
+	if ( ! $event_id ) {
+		wp_die( 'Invalid event.' );
+	}
+
+	$event_title 	= $event_id->post_title;
 	
 	$event_summary 	= get_field('event_summary', $event_id->ID);		
 	$start_date		= date('Y-m-d', strtotime(get_field('start_date', $event_id->ID)));	

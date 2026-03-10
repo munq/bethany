@@ -68,7 +68,8 @@ function bethany_login_form_fields() {
 				<div class="field-wrp">
 					<input type="hidden" name="bethany_login_nonce" value="<?php echo wp_create_nonce('bethany-login-nonce'); ?>"/>
 					<a id="bethany_login_submit"class="btn-primary btn-submit" href="javascript:;">Login</a>
-					<a id="bethany-forget-password" href="<?php echo get_permalink(get_page_by_path('bethany-forgot-password')->ID); ?>">Forgot Password?</a>
+					<?php $forgot_password_page = get_page_by_path('bethany-forgot-password'); ?>
+					<a id="bethany-forget-password" href="<?php echo $forgot_password_page ? get_permalink($forgot_password_page->ID) : wp_lostpassword_url(); ?>">Forgot Password?</a>
 				</div>
 			</fieldset>
 		</form>
@@ -80,23 +81,24 @@ function bethany_login_form_fields() {
 // logs a member in after submitting a form
 function bethany_login_member() {
  
-	if(isset($_POST['bethany_user_login']) && wp_verify_nonce($_POST['bethany_login_nonce'], 'bethany-login-nonce')) {
+	if ( isset( $_POST['bethany_user_login'], $_POST['bethany_login_nonce'] ) && wp_verify_nonce( $_POST['bethany_login_nonce'], 'bethany-login-nonce' ) ) {
  
-		// this returns the user ID and other info from the user name
-		$user = get_userdatabylogin($_POST['bethany_user_login']);
+		$user_login = isset( $_POST['bethany_user_login'] ) ? sanitize_user( wp_unslash( $_POST['bethany_user_login'] ) ) : '';
+		$user_pass = isset( $_POST['bethany_user_pass'] ) ? (string) wp_unslash( $_POST['bethany_user_pass'] ) : '';
+		$user = $user_login !== '' ? get_user_by( 'login', $user_login ) : false;
 
-		if(!$user) {
+		if ( ! $user ) {
 			// if the user name doesn't exist
 			bethany_errors()->add('empty_username', __('Please enter valid username'));
 		}
  
-		if(!isset($_POST['bethany_user_pass']) || $_POST['bethany_user_pass'] == '') {
+		if ( $user_pass === '' ) {
 			// if no password was entered
 			bethany_errors()->add('empty_password', __('Please enter a valid password'));
 		}
  
 		// check the user's login with their password
-		if(!wp_check_password($_POST['bethany_user_pass'], $user->user_pass, $user->ID)) {
+		if ( $user && $user_pass !== '' && ! wp_check_password( $user_pass, $user->user_pass, $user->ID ) ) {
 			// if the password is incorrect for the specified user
 			bethany_errors()->add('empty_password', __(''));
 		}
@@ -107,9 +109,22 @@ function bethany_login_member() {
 		// only log the user in if there are no errors
 		if(empty($errors)) {
  
-			wp_setcookie($_POST['bethany_user_login'], $_POST['bethany_user_pass'], true);
-			$current_user = wp_set_current_user($user->ID, $_POST['bethany_user_login']);
-			do_action('wp_login', $_POST['bethany_user_login']);
+			$signon = wp_signon(
+				array(
+					'user_login'    => $user_login,
+					'user_password' => $user_pass,
+					'remember'      => true,
+				),
+				is_ssl()
+			);
+
+			if ( is_wp_error( $signon ) ) {
+				bethany_errors()->add( 'login_failed', __( 'Please enter valid username or password' ) );
+				return;
+			}
+
+			$current_user = wp_set_current_user( $user->ID, $user_login );
+			do_action('wp_login', $user_login, $user);
 			//var_dump($current_user);exit;
 
 			if ( in_array( 'sst', (array) $user->roles ) ) {

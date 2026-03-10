@@ -9,7 +9,7 @@
 
 if ( current_user_can('activate_plugins') ||  current_user_can('bethany_access_sstt') ) {
 	
-	$show = $_GET['show'];
+	$show = isset( $_GET['show'] ) ? sanitize_text_field( wp_unslash( $_GET['show'] ) ) : '';
 	if ('latest' === $show) {
 		// Redirect to current series page
 		$args = array(
@@ -124,6 +124,7 @@ if ( current_user_can('activate_plugins') ||  current_user_can('bethany_access_s
 		
 } else {
 	echo '<h2>You do not have enough permission to view this page</h2>';
-	wp_redirect(get_permalink(get_page_by_path('bethany-login')->ID)); exit;
+	$login_page = get_page_by_path('bethany-login');
+	wp_redirect( $login_page ? get_permalink( $login_page->ID ) : wp_login_url() ); exit;
 }
 

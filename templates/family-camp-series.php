@@ -84,7 +84,7 @@ $count_days = count(get_pages( array( 'child_of' => $post->ID, 'parent' => $post
 				'posts_per_page'	=> -1
 			);
 			
-			$day = $_GET['camp_day'];
+			$day = isset( $_GET['camp_day'] ) ? absint( $_GET['camp_day'] ) : 0;
 			
 			if(!empty($day)) {
 				$args['post_title_like'] = "Day $day";
@@ -120,7 +120,7 @@ $count_days = count(get_pages( array( 'child_of' => $post->ID, 'parent' => $post
 						'posts_per_page'	=> -1
 					);
 					
-					$session = $_GET['camp_session'];
+					$session = isset( $_GET['camp_session'] ) ? sanitize_text_field( wp_unslash( $_GET['camp_session'] ) ) : '';
 			
 					if(!empty($session)) {
 						$meta_query = array(
@@ -146,24 +146,25 @@ $count_days = count(get_pages( array( 'child_of' => $post->ID, 'parent' => $post
 							$query_articles->the_post();
 							$post_articles = $query_articles->post;
 							
-							$messages			= get_field('message',$post_articles->ID);		
+							$messages = get_field( 'message', $post_articles->ID );
+							$message_id = ( is_object( $messages ) && isset( $messages->ID ) ) ? $messages->ID : 0;
 							
-							$article_title		= get_field('article_title', $messages->ID);							
-							$text_refrence		= get_field('text_refrence', $messages->ID);
-							$speaker			= get_field('speaker', $messages->ID);
+							$article_title		= $message_id ? get_field( 'article_title', $message_id ) : '';							
+							$text_refrence		= $message_id ? get_field( 'text_refrence', $message_id ) : '';
+							$speaker			= $message_id ? get_field( 'speaker', $message_id ) : '';
 							
-							$bulletin			= get_field('bulletin', $messages->ID);
-							$bulletin_url 		= ($bulletin) ? wp_get_attachment_url( $bulletin['id'] ) : '';
+							$bulletin			= $message_id ? get_field( 'bulletin', $message_id ) : '';
+							$bulletin_url 		= ( is_array( $bulletin ) && ! empty( $bulletin['id'] ) ) ? wp_get_attachment_url( $bulletin['id'] ) : '';
 							
-							if(get_field('notes', $messages->ID)) {
-								$notes				= get_field('notes', $messages->ID);
-								$notes_url			= ($notes) ? wp_get_attachment_url( $notes['id'] ) : '';
+							if ( $message_id && get_field( 'notes', $message_id ) ) {
+								$notes				= get_field( 'notes', $message_id );
+								$notes_url			= ( is_array( $notes ) && ! empty( $notes['id'] ) ) ? wp_get_attachment_url( $notes['id'] ) : '';
 							} else {
-								$notes_url			= get_field('notes_url', $messages->ID);
+								$notes_url			= $message_id ? get_field( 'notes_url', $message_id ) : '';
 							}
 							
-							$video_url			= get_field('video_url', $messages->ID);
-							$audio_url			= get_field('audio_url', $messages->ID);							
+							$video_url			= $message_id ? get_field( 'video_url', $message_id ) : '';
+							$audio_url			= $message_id ? get_field( 'audio_url', $message_id ) : '';							
 						?>
 							<p><strong><a href="<?php echo get_permalink($post_articles->ID); ?>"><?php echo $post_articles->post_title; ?></a></strong><br/>
 							<?php echo ($text_refrence) ? 'Text: ' . $text_refrence : '' ; ?></p>
@@ -285,7 +286,8 @@ $count_days = count(get_pages( array( 'child_of' => $post->ID, 'parent' => $post
 								<p><button type="submit" class="btn-primary btn-gray">Search Messages</button></p>
 							</div>
 							<div class="field-wrp">
-								<p><a href="<?php echo get_permalink(get_post($post->post_parent)->post_parent);?>">View all messages</a></p>
+								<?php $parent_post = get_post( $post->post_parent ); $messages_url = $parent_post ? get_permalink( $parent_post->post_parent ) : ''; ?>
+								<p><a href="<?php echo $messages_url; ?>">View all messages</a></p>
 							</div>
 						</fieldset>
 						

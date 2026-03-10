@@ -12,7 +12,8 @@ global $sub_page;
  <ul class="grid-testimonies match-height load-next clearfix">
 <?php
 
- $rows_count = count(get_sub_field('testimonies', $sub_page->ID));
+ $testimony_rows = get_sub_field( 'testimonies', $sub_page->ID );
+ $rows_count = is_array( $testimony_rows ) ? count( $testimony_rows ) : 0;
  
  if(have_rows('testimonies', $sub_page->ID)) {
 	
@@ -21,14 +22,14 @@ global $sub_page;
 		
 		$testimony 			= get_sub_field('testimony');
 		
-		if($testimony->post_status != 'publish')
+		if ( ! is_object( $testimony ) || ! isset( $testimony->post_status ) || 'publish' !== $testimony->post_status )
 			continue;
 		
 		$big 				= get_field('big_picture',$testimony->ID);
 		$author 			= get_field('author',$testimony->ID);
 		$quote 				= get_field('quote',$testimony->ID);
 		$overview_image 	= get_field('overview_image', $testimony->ID);									
-		$overview_image_url	= ($overview_image) ? $overview_image['url'] : '' ;
+		$overview_image_url	= ( is_array( $overview_image ) && ! empty( $overview_image['url'] ) ) ? $overview_image['url'] : '' ;
 		$article_date		= get_field('article_date', $testimony->ID );
 		if ( '19700101' == $article_date )
 			$article_date = '';
