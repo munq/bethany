@@ -7,12 +7,16 @@
  * @since bethany 1.0
  */
 //$start = microtime(true);
-if(isset($_GET) && !empty($_GET)) {		
-	$search 		= $_GET['bsr_search'];
-	$bible_book 	= $_GET['bible_book'];
-	$from_yearmonth = $_GET['from_year'] . $_GET['from_month'];
-	$to_yearmonth 	= $_GET['to_year'] . $_GET['to_month'];
-	$bsr_series		= $_GET['bsr_series'];
+if ( ! empty( $_GET ) ) {		
+	$search 		= isset( $_GET['bsr_search'] ) ? sanitize_text_field( wp_unslash( $_GET['bsr_search'] ) ) : '';
+	$bible_book 	= isset( $_GET['bible_book'] ) ? sanitize_text_field( wp_unslash( $_GET['bible_book'] ) ) : '';
+	$from_year		= isset( $_GET['from_year'] ) ? preg_replace( '/[^0-9]/', '', wp_unslash( $_GET['from_year'] ) ) : '';
+	$from_month		= isset( $_GET['from_month'] ) ? preg_replace( '/[^0-9]/', '', wp_unslash( $_GET['from_month'] ) ) : '';
+	$to_year		= isset( $_GET['to_year'] ) ? preg_replace( '/[^0-9]/', '', wp_unslash( $_GET['to_year'] ) ) : '';
+	$to_month		= isset( $_GET['to_month'] ) ? preg_replace( '/[^0-9]/', '', wp_unslash( $_GET['to_month'] ) ) : '';
+	$from_yearmonth = $from_year . $from_month;
+	$to_yearmonth 	= $to_year . $to_month;
+	$bsr_series		= isset( $_GET['bsr_series'] ) ? sanitize_text_field( wp_unslash( $_GET['bsr_series'] ) ) : '';
 
 	// Use MYSQL CASE to order the values by columns 
 	$querystr = "SELECT ID, 
@@ -39,7 +43,7 @@ if(isset($_GET) && !empty($_GET)) {
 	$bsr_series_array = array();					
 	
 	if(!empty($to_yearmonth)) {
-		$to_yearmonth 	= $_GET['to_year'] . '-' . $_GET['to_month'];
+		$to_yearmonth 	= $to_year . '-' . $to_month;
 		$to_yearmonth 	= strtotime(date("Y-m", strtotime($to_yearmonth)) . " +1 month");
 		$to_yearmonth 	= date("Ym",$to_yearmonth);
 	}

@@ -132,7 +132,7 @@
 			<form action="<?php echo get_permalink(get_page_by_path('bible-study-resources/bsr-search-result')->ID); ?>" method="GET" id="bible_study_form">
 				<fieldset>
 					<div class="field-wrp field-search">
-						<input name="bsr_search" type="text" placeholder="What do you want to read?" class="full-width" value="<?php echo $_GET['bsr_search']?>" />
+						<input name="bsr_search" type="text" placeholder="What do you want to read?" class="full-width" value="<?php echo isset( $_GET['bsr_search'] ) ? esc_attr( wp_unslash( $_GET['bsr_search'] ) ) : ''; ?>" />
 						<input name="from_month" type="hidden" value="" />
 						<input name="from_year" type="hidden" value="" />
 						<input name="to_month" type="hidden" value="" />
