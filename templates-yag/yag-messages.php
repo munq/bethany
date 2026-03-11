@@ -131,7 +131,7 @@
 		if($page_overview) {
 			$overview_image = get_field('overview_image', $page_overview->ID);
 			$summary_content = get_field('summary_content', $page_overview->ID);
-			$overview_image_url = ($overview_image) ? $overview_image['url'] : 'http://placehold.it/800x414/bbb/fff&text=image';
+			$overview_image_url = ($overview_image) ? $overview_image['url'] : 'http://placehold.co/800x414/bbb/fff&text=image';
 			?>
 			<section class="col-full clearfix">
 				<!-- Overlapping Banner Column -->
