@@ -7,7 +7,7 @@
  * @since bethany 1.0
  */
 //$start = microtime(true);
-if ( ! empty( $_GET ) ) {		
+if ( ! empty( $_GET ) ) {
 	$search 		= isset( $_GET['bsr_search'] ) ? sanitize_text_field( wp_unslash( $_GET['bsr_search'] ) ) : '';
 	$bible_book 	= isset( $_GET['bible_book'] ) ? sanitize_text_field( wp_unslash( $_GET['bible_book'] ) ) : '';
 	$from_year		= isset( $_GET['from_year'] ) ? preg_replace( '/[^0-9]/', '', wp_unslash( $_GET['from_year'] ) ) : '';
@@ -17,11 +17,15 @@ if ( ! empty( $_GET ) ) {
 	$from_yearmonth = $from_year . $from_month;
 	$to_yearmonth 	= $to_year . $to_month;
 	$bsr_series		= isset( $_GET['bsr_series'] ) ? sanitize_text_field( wp_unslash( $_GET['bsr_series'] ) ) : '';
+	$search_like    = '%' . $wpdb->esc_like( $search ) . '%';
+	$search_ref_colon = '%' . $wpdb->esc_like( $search . ':' ) . '%';
+	$search_ref_semicolon = '%' . $wpdb->esc_like( $search . ';' ) . '%';
+	$bible_book_like = '%' . $wpdb->esc_like( $bible_book ) . '%';
 
-	// Use MYSQL CASE to order the values by columns 
+	// Use MYSQL CASE to order the values by columns.
 	$querystr = "SELECT ID, 
 		CASE
-		WHEN wp_posts.post_title LIKE '%{$search}%' THEN '1'
+		WHEN wp_posts.post_title LIKE '" . esc_sql( $search_like ) . "' THEN '1'
 		WHEN mt1.meta_key = 'article_title' THEN '2' 
 		WHEN mt1.meta_key = 'text_refrence' THEN '3' 
 		WHEN mt1.meta_key = 'beth_search_keywords' THEN '4' 
@@ -48,46 +52,63 @@ if ( ! empty( $_GET ) ) {
 		$to_yearmonth 	= date("Ym",$to_yearmonth);
 	}
 		
-	if(!empty($search)) {
-		$querystr .= " AND (
-			$wpdb->posts.post_title LIKE '%" . $search ."%' 
-			OR 
-			mt1.meta_key = 'article_title' AND mt1.meta_value LIKE '%" . $search ."%'
-			OR
-			mt1.meta_key = 'text_refrence' AND ( CAST(mt1.meta_value AS CHAR) LIKE '%{$search}%' OR CAST(mt1.meta_value AS CHAR) LIKE '%{$search}:%' OR CAST(mt1.meta_value AS CHAR) LIKE '%{$search};%' )
-			OR
-			mt1.meta_key = 'beth_search_keywords' AND mt1.meta_value LIKE '%" . $search ."%'
-		)";
-	}						
-	
-	if(!empty($from_yearmonth) && !empty($to_yearmonth)) {				
-		$querystr .= " AND (mt3.meta_key = 'article_date' AND mt3.meta_value BETWEEN '" . $from_yearmonth . "' AND '". $to_yearmonth ."')";
+	if ( ! empty( $search ) ) {
+		$querystr .= $wpdb->prepare(
+			" AND (
+				$wpdb->posts.post_title LIKE %s
+				OR 
+				(mt1.meta_key = 'article_title' AND mt1.meta_value LIKE %s)
+				OR
+				(mt1.meta_key = 'text_refrence' AND ( CAST(mt1.meta_value AS CHAR) LIKE %s OR CAST(mt1.meta_value AS CHAR) LIKE %s OR CAST(mt1.meta_value AS CHAR) LIKE %s ))
+				OR
+				(mt1.meta_key = 'beth_search_keywords' AND mt1.meta_value LIKE %s)
+			)",
+			$search_like,
+			$search_like,
+			$search_like,
+			$search_ref_colon,
+			$search_ref_semicolon,
+			$search_like
+		);
 	}
 	
-	if(!empty($from_yearmonth) && empty($to_yearmonth)) {						
+	if ( ! empty( $from_yearmonth ) && ! empty( $to_yearmonth ) ) {
+		$querystr .= $wpdb->prepare(
+			" AND (mt3.meta_key = 'article_date' AND mt3.meta_value BETWEEN %s AND %s)",
+			$from_yearmonth,
+			$to_yearmonth
+		);
+	}
+	
+	if ( ! empty( $from_yearmonth ) && empty( $to_yearmonth ) ) {
 		$time_today = current_time( 'timestamp' );
-		$to_yearmonth = date('Ym', $time_today);
+		$to_yearmonth = date( 'Ym', $time_today );
 		
-		$querystr .= " AND (mt3.meta_key = 'article_date' AND mt3.meta_value BETWEEN '" . $from_yearmonth . "' AND '". $to_yearmonth ."')";							
+		$querystr .= $wpdb->prepare(
+			" AND (mt3.meta_key = 'article_date' AND mt3.meta_value BETWEEN %s AND %s)",
+			$from_yearmonth,
+			$to_yearmonth
+		);
 	}
 	
-	if(!empty($bible_book)) {	
-		$querystr .= " AND (mt4.meta_key LIKE 'botb_tags_%_botb_tag_book' AND mt4.meta_value LIKE '%" .$bible_book."%')";
+	if ( ! empty( $bible_book ) ) {
+		$querystr .= $wpdb->prepare(
+			" AND (mt4.meta_key LIKE 'botb_tags_%%_botb_tag_book' AND mt4.meta_value LIKE %s)",
+			$bible_book_like
+		);
 	}
 
 	$querystr_other = $querystr;
 
-	if(!empty($bsr_series)) {
+	if ( ! empty( $bsr_series ) ) {
 		$common_query = array();
-		$bsr_series_tags = explode(',', $bsr_series);
-		foreach($bsr_series_tags as $bsr_series_tag) {
-			$common_query[] = " mt2.meta_key = 'search_tag' AND mt2.meta_value = '$bsr_series_tag'";
+		$bsr_series_tags = array_filter( array_map( 'trim', explode( ',', $bsr_series ) ) );
+		foreach ( $bsr_series_tags as $bsr_series_tag ) {
+			$common_query[] = $wpdb->prepare( "( mt2.meta_key = 'search_tag' AND mt2.meta_value = %s )", $bsr_series_tag );
 		}
 
-		if(!empty($common_query)) {
-			$querystr_search_tag .= " AND (
-				" .	implode(' OR ', $common_query)
-				.")";
+		if ( ! empty( $common_query ) ) {
+			$querystr_search_tag = " AND (" . implode( ' OR ', $common_query ) . ")";
 			$querystr .= $querystr_search_tag;
 			$querystr .= " 
 				AND (
