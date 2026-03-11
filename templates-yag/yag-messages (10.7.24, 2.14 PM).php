@@ -145,7 +145,7 @@
 			$overview_content = get_field('page_overview');
 			$overview_image		= 	get_field('overview_image', $overview_content->ID);
 			$summary_content	= get_field('summary_content', $overview_content->ID);
-			$overview_image_url	=	($overview_image) ? $overview_image['url'] : 'http://placehold.it/800x414/bbb/fff&text=image' ;	
+			$overview_image_url	=	($overview_image) ? $overview_image['url'] : 'http://placehold.co/800x414/bbb/fff&text=image' ;	
 			?>
 				<!-- Overlapping Banner Column -->
 				<section class="col-overlap-banner float-right">

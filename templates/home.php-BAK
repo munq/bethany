@@ -325,7 +325,7 @@ date_default_timezone_set("UTC");
                                 ?>
                                 <div class="video-embed box-img">
                                     <img
-                                        src="<?php echo ($tab['cover_image_url']) ? $tab['cover_image_url'] : 'http://placehold.it/980x504/369/333&text=video'; ?>"/>
+                                        src="<?php echo ($tab['cover_image_url']) ? $tab['cover_image_url'] : 'http://placehold.co/980x504/369/333&text=video'; ?>"/>
                                     <?php //if ( $tab['video_url'] ) { ?>
                                     <div class="video-overlay">
                                         <span class="video-duration"></span>

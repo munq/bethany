@@ -73,7 +73,7 @@ get_header(); ?>
 			<!-- Video -->
 			<?php if ($video_url) { ?>
 				<div class="video-embed box-img">
-					<img src="<?php echo ($cover_image_url) ? $cover_image_url : 'http://placehold.it/980x504/369/333&text=video' ;?>" />
+					<img src="<?php echo ($cover_image_url) ? $cover_image_url : 'http://placehold.co/980x504/369/333&text=video' ;?>" />
 					<div class="video-overlay">
 						<span class="video-duration"></span>
 					</div>

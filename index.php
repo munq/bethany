@@ -96,7 +96,7 @@ get_header(); ?>
 					<div id="tab-1" class="clearfix">
 						<!-- Video -->
 						<div class="video-embed box-img">
-							<img src="http://placehold.it/980x594/369/333&text=video" />
+							<img src="http://placehold.co/980x594/369/333&text=video" />
 							<div class="video-overlay">
 								<span class="video-duration">15:25</span>
 							</div>
@@ -169,7 +169,7 @@ get_header(); ?>
 				<!-- Overlapping Image Column -->
 				<section class="col-overlap-img float-left">
 					<div class="box-img">
-						<img src="http://placehold.it/800x414/bbb/fff&text=image" />
+						<img src="http://placehold.co/800x414/bbb/fff&text=image" />
 					</div>
 					<p>Caption explaning the wall here lorem ipsum dolor</p>
 					<p><a href="#">Read more</a></p>
